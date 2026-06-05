@@ -101,6 +101,7 @@
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
   <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css?v=Xn3Uy9"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css?v=Xn3Uy9" type="text/css">
+
   
   
   
@@ -2199,23 +2200,46 @@ resetTimer();
   window.dClosePop=function(){document.getElementById('dpop').style.display='none';document.body.style.overflow='';};
   window.dCloseErr=function(){document.getElementById('derr').style.display='none';};
 
-/* ── GOOGLE PLACES (новый API 2025) ── */
-  window.initDarnaPlaces=async function(){
+/* ── ADDRESS AUTOCOMPLETE (Nominatim) ── */
+  window.initDarnaPlaces=function(){
     var inp=document.getElementById('fadr');
-    if(!inp||!window.google)return;
-    await google.maps.importLibrary('places');
-    var pac=new google.maps.places.PlaceAutocompleteElement({
-      componentRestrictions:{country:'us'},
-      types:['address']
+    if(!inp)return;
+    var list=document.createElement('div');
+    list.style.cssText='position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #7a4b27;border-radius:9px;box-shadow:0 8px 24px rgba(122,75,39,0.15);z-index:99999;margin-top:4px;max-height:200px;overflow-y:auto;display:none;font-family:"DM Sans",sans-serif;';
+    inp.parentElement.style.position='relative';
+    inp.parentElement.appendChild(list);
+    var timer=null;
+    inp.addEventListener('input',function(){
+      clearTimeout(timer);
+      var q=inp.value.trim();
+      if(q.length<3){list.style.display='none';return;}
+      timer=setTimeout(function(){
+        fetch('https://nominatim.openstreetmap.org/search?format=json&limit=5&countrycodes=us&q='+encodeURIComponent(q),{headers:{'Accept-Language':'en-US'}})
+        .then(function(r){return r.json();})
+        .then(function(data){
+          list.innerHTML='';
+          if(!data.length){list.style.display='none';return;}
+          data.forEach(function(item){
+            var div=document.createElement('div');
+            div.textContent=item.display_name;
+            div.style.cssText='padding:10px 14px;font-size:13px;color:#2e1f10;cursor:pointer;border-bottom:1px solid rgba(122,75,39,0.1);';
+            div.addEventListener('mouseenter',function(){div.style.background='#f5ede4';});
+            div.addEventListener('mouseleave',function(){div.style.background='';});
+            div.addEventListener('mousedown',function(e){
+              e.preventDefault();
+              inp.value=item.display_name;
+              list.style.display='none';
+              savD();
+            });
+            list.appendChild(div);
+          });
+          list.style.display='block';
+        })
+        .catch(function(){list.style.display='none';});
+      },400);
     });
-    pac.style.cssText='width:100%;font-family:"DM Sans","Segoe UI",sans-serif;font-size:13.5px;--gmp-material-container-color:#faf7f4;--gmp-color-on-surface:#2e1f10;';
-    inp.style.display='none';
-    inp.parentElement.appendChild(pac);
-    pac.addEventListener('gmp-placeselect',async function(e){
-      var place=e.place;
-      await place.fetchFields({fields:['formattedAddress']});
-      inp.value=place.formattedAddress||'';
-      savD();
+    document.addEventListener('click',function(e){
+      if(!inp.parentElement.contains(e.target))list.style.display='none';
     });
   };
 
@@ -2298,7 +2322,13 @@ resetTimer();
   buildPkgs();buildAos();upProg(1);loadSav();dPickInit();
 })();
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApr6QY5waegliqq33pXGqZerouubI0H7w&libraries=places&callback=initDarnaPlaces" async defer></script>
+<script>
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',window.initDarnaPlaces);
+  } else {
+    window.initDarnaPlaces();
+  }
+</script>
 </div>
 
 <div id="custom-html-4d"><!-- DARNA DUO — MENU BLOCK for Mobirise -->
