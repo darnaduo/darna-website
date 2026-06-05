@@ -2208,24 +2208,50 @@ resetTimer();
   /* ── GOOGLE PLACES ── */
   window.initDarnaPlaces=function(){
     var inp=document.getElementById('fadr');
-    if(!inp||typeof google==='undefined'){
-      setTimeout(window.initDarnaPlaces,500);return;
-    }
-    var ac=new google.maps.places.Autocomplete(inp,{
-      types:['geocode'],
-      componentRestrictions:{country:'us'},
-      fields:['formatted_address','geometry']
+    if(!inp)return;
+    var dropdown=document.createElement('div');
+    dropdown.style.cssText='position:absolute;z-index:9999;background:#fff;border:1px solid #e8d9c8;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.12);max-height:220px;overflow-y:auto;width:100%;display:none;margin-top:2px;left:0;';
+    inp.parentNode.style.position='relative';
+    inp.parentNode.appendChild(dropdown);
+    var timer=null;
+    inp.addEventListener('input',function(){
+      clearTimeout(timer);
+      var q=inp.value.trim();
+      if(q.length<3){dropdown.style.display='none';return;}
+      timer=setTimeout(function(){
+        fetch('https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=us&q='+encodeURIComponent(q),{headers:{'Accept-Language':'en','User-Agent':'DarnaDuoBooking/1.0'}})
+        .then(function(r){return r.json();})
+        .then(function(data){
+          dropdown.innerHTML='';
+          if(!data.length){dropdown.style.display='none';return;}
+          data.forEach(function(item){
+            var div=document.createElement('div');
+            div.textContent=item.display_name;
+            div.style.cssText='padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f5ede4;color:#3e2a18;line-height:1.4;';
+            div.addEventListener('mouseover',function(){this.style.background='#fdf8f3';});
+            div.addEventListener('mouseout',function(){this.style.background='#fff';});
+            div.addEventListener('mousedown',function(e){
+              e.preventDefault();
+              inp.value=item.display_name;
+              dropdown.style.display='none';
+              savD();
+            });
+            dropdown.appendChild(div);
+          });
+          dropdown.style.display='block';
+        })
+        .catch(function(){dropdown.style.display='none';});
+      },400);
     });
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault();});
-    ac.addListener('place_changed',function(){
-      var place=ac.getPlace();
-      if(place.formatted_address){inp.value=place.formatted_address;}
-      savD();
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Enter')e.preventDefault();
+      if(e.key==='Escape')dropdown.style.display='none';
+    });
+    document.addEventListener('click',function(e){
+      if(!inp.parentNode.contains(e.target))dropdown.style.display='none';
     });
   };
-  document.addEventListener('DOMContentLoaded',function(){
-    if(typeof google!=='undefined')window.initDarnaPlaces();
-  });
+  document.addEventListener('DOMContentLoaded',window.initDarnaPlaces);
 
   /* ── AUTOSAVE LISTENERS ── */
   ['fdt','ftm','fadr','ffn','fln','fem','fph','fref','fnt','fgu'].forEach(function(id){
