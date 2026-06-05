@@ -244,7 +244,7 @@
     <li><a href="index.html#custom-html-4d">Menu</a></li>
     <li><a href="index.html#custom-html-4e">Reviews</a></li>
     <li><a href="index.html#custom-html-4f">Contact Us</a></li>
-    <li><a href="page2.html" class="active">Blog</a></li>
+    <li><a href="page2.html">Blog</a></li>
     <li><a href="index.html#custom-html-1j" class="nav-book">Booking</a></li>
   </ul>
   <button class="burger" id="burger" aria-label="Menu" onclick="toggleMenu()">
@@ -1881,15 +1881,28 @@ resetTimer();
 
 <!-- POPUP SUCCESS -->
 <div id="dpop" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:rgba(30,15,5,.65);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#ffffff !important;border-radius:22px;border:1px solid rgba(201,150,58,0.25);box-shadow:0 24px 70px rgba(122,75,39,.18);padding:36px 26px 26px;max-width:360px;width:100%;text-align:center;position:relative;animation:dpopA .4s cubic-bezier(.34,1.56,.64,1);">
-    <button onclick="dClosePop()" style="position:absolute;top:13px;right:13px;width:28px;height:28px;background:#f5ede4;border:1px solid rgba(122,75,39,.18);border-radius:50%;cursor:pointer;font-size:14px;color:#8a7060 !important;line-height:28px;font-family:Arial,sans-serif;">✕</button>
-    <div style="font-size:32px;margin:0 0 10px;line-height:1.3;">☕✨</div>
-    <div style="font-size:22px;font-weight:800;color:#7a4b27 !important;margin:0 0 6px;font-family:Arial,sans-serif;line-height:1.3;">Thank you!</div>
-    <div style="font-size:15px;font-weight:700;color:#2e1f10 !important;margin:0 0 12px;font-family:Arial,sans-serif;line-height:1.4;">Your booking request is received</div>
-    <div style="font-size:13px;color:#8a7060 !important;line-height:1.7;margin:0 0 16px;font-family:Arial,sans-serif;">We'll send a <span style="color:#2e1f10 !important;font-weight:700;">final invoice with payment link</span> to your email shortly.</div>
-    <div style="display:inline-flex;align-items:center;gap:5px;background:#fdf3e3;border:1.5px solid #c9963a;border-radius:100px;padding:6px 16px;margin-bottom:18px;font-size:11px;font-weight:700;color:#9c6340 !important;font-family:Arial,sans-serif;">🎨 Custom cups being prepared</div>
-    <button onclick="dClosePop()" style="display:block;width:100%;padding:12px;background:#7a4b27 !important;color:#ffffff !important;font-family:Arial,sans-serif;font-size:14px;font-weight:700;border:none;border-radius:100px;cursor:pointer;margin-bottom:10px;" onmouseover="this.style.background='#5b3318'" onmouseout="this.style.background='#7a4b27'">Got it, thank you! ☕</button>
-    <a href="index.html" style="display:block;width:100%;padding:11px;background:#f5ede4 !important;color:#7a4b27 !important;font-family:Arial,sans-serif;font-size:13px;font-weight:700;border:1.5px solid rgba(122,75,39,0.25);border-radius:100px;cursor:pointer;text-decoration:none;box-sizing:border-box;">← Back to Website</a>
+<style>
+#dpop-inner, #dpop-inner * { all: revert; box-sizing: border-box; font-family: Arial, sans-serif !important; }
+#dpop-inner { background:#fff; border-radius:22px; border:1px solid rgba(201,150,58,0.25); box-shadow:0 24px 70px rgba(122,75,39,.18); padding:36px 26px 26px; max-width:360px; width:100%; text-align:center; position:relative; animation:dpopA .4s cubic-bezier(.34,1.56,.64,1); }
+#dpop-inner .dp-ico { font-size:32px; margin:0 0 10px; line-height:1.3; display:block; }
+#dpop-inner .dp-t1 { font-size:22px; font-weight:800; color:#7a4b27; margin:0 0 6px; display:block; }
+#dpop-inner .dp-t2 { font-size:15px; font-weight:700; color:#2e1f10; margin:0 0 12px; display:block; }
+#dpop-inner .dp-t3 { font-size:13px; color:#8a7060; line-height:1.7; margin:0 0 16px; display:block; }
+#dpop-inner .dp-t3 b { color:#2e1f10; font-weight:700; }
+#dpop-inner .dp-badge { display:inline-flex; align-items:center; gap:5px; background:#fdf3e3; border:1.5px solid #c9963a; border-radius:100px; padding:6px 16px; margin-bottom:18px; font-size:11px; font-weight:700; color:#9c6340; }
+#dpop-inner .dp-btn1 { display:block; width:100%; padding:12px; background:#7a4b27; color:#fff; font-size:14px; font-weight:700; border:none; border-radius:100px; cursor:pointer; margin-bottom:10px; }
+#dpop-inner .dp-btn2 { display:block; width:100%; padding:11px; background:#f5ede4; color:#7a4b27; font-size:13px; font-weight:700; border:1.5px solid rgba(122,75,39,0.25); border-radius:100px; cursor:pointer; text-decoration:none; }
+#dpop-inner .dp-close { position:absolute; top:13px; right:13px; width:28px; height:28px; background:#f5ede4; border:1px solid rgba(122,75,39,.18); border-radius:50%; cursor:pointer; font-size:14px; color:#8a7060; line-height:28px; text-align:center; }
+</style>
+  <div id="dpop-inner">
+    <button class="dp-close" onclick="dClosePop()">✕</button>
+    <span class="dp-ico">☕✨</span>
+    <span class="dp-t1">Thank you!</span>
+    <span class="dp-t2">Your booking request is received</span>
+    <span class="dp-t3">We'll send a <b>final invoice with payment link</b> to your email shortly.</span>
+    <span class="dp-badge">🎨 Custom cups being prepared</span>
+    <button class="dp-btn1" onclick="dClosePop()" onmouseover="this.style.background='#5b3318'" onmouseout="this.style.background='#7a4b27'">Got it, thank you! ☕</button>
+    <a href="index.html" class="dp-btn2">← Back to Website</a>
   </div>
 </div>
 
