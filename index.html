@@ -101,7 +101,6 @@
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
   <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css?v=Xn3Uy9"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css?v=Xn3Uy9" type="text/css">
-
   
   
   
@@ -2200,21 +2199,23 @@ resetTimer();
   window.dClosePop=function(){document.getElementById('dpop').style.display='none';document.body.style.overflow='';};
   window.dCloseErr=function(){document.getElementById('derr').style.display='none';};
 
-  /* ── GOOGLE PLACES ── */
-  window.initDarnaPlaces=function(){
+/* ── GOOGLE PLACES (новый API 2025) ── */
+  window.initDarnaPlaces=async function(){
     var inp=document.getElementById('fadr');
     if(!inp||!window.google)return;
-    var ac=new google.maps.places.Autocomplete(inp,{
-      types:['address'],
+    await google.maps.importLibrary('places');
+    var pac=new google.maps.places.PlaceAutocompleteElement({
       componentRestrictions:{country:'us'},
-      fields:['formatted_address']
+      types:['address']
     });
-    ac.addListener('place_changed',function(){
-      var place=ac.getPlace();
-      if(place.formatted_address){inp.value=place.formatted_address;savD();}
-    });
-    inp.addEventListener('keydown',function(e){
-      if(e.key==='Enter')e.preventDefault();
+    pac.style.cssText='width:100%;font-family:"DM Sans","Segoe UI",sans-serif;font-size:13.5px;--gmp-material-container-color:#faf7f4;--gmp-color-on-surface:#2e1f10;';
+    inp.style.display='none';
+    inp.parentElement.appendChild(pac);
+    pac.addEventListener('gmp-placeselect',async function(e){
+      var place=e.place;
+      await place.fetchFields({fields:['formattedAddress']});
+      inp.value=place.formattedAddress||'';
+      savD();
     });
   };
 
