@@ -7,7 +7,8 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <link rel="shortcut icon" href="assets/images/logo5.png" type="image/x-icon">
-  <meta name="description" content="Darna Duo · Premium mobile Coffee &amp; Matcha Catering Bar · LA &amp; SoCal. Armenian coffee, matcha lattes, iced drinks, Dubai chocolate &amp; more. Perfect for weddings, corporate events &amp; private parties. Book today.">
+ 
+<meta name="description" content="Darna Duo · Premium mobile Coffee &amp; Matcha Catering Bar · LA &amp; SoCal. Armenian coffee, matcha lattes, iced drinks, Dubai chocolate &amp; more. Perfect for weddings, corporate events &amp; private parties. Book today.">
  
 <title>Darna Duo | Coffee &amp; Matcha Catering · LA &amp; SoCal</title>
  
@@ -96,7 +97,7 @@
   <link rel="stylesheet" href="assets/theme/css/style.css">
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
-  <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css?v=CsVsuK"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css?v=CsVsuK" type="text/css">
+  <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css?v=Xn3Uy9"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css?v=Xn3Uy9" type="text/css">
 
   
   
@@ -2199,11 +2200,24 @@ resetTimer();
   /* ── GOOGLE PLACES ── */
   window.initDarnaPlaces=function(){
     var inp=document.getElementById('fadr');
-    if(!inp||typeof google==='undefined')return;
-    var ac=new google.maps.places.Autocomplete(inp,{types:['geocode']});
+    if(!inp||typeof google==='undefined'){
+      setTimeout(window.initDarnaPlaces,500);return;
+    }
+    var ac=new google.maps.places.Autocomplete(inp,{
+      types:['geocode'],
+      componentRestrictions:{country:'us'},
+      fields:['formatted_address','geometry']
+    });
     inp.addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault();});
-    ac.addListener('place_changed',savD);
+    ac.addListener('place_changed',function(){
+      var place=ac.getPlace();
+      if(place.formatted_address){inp.value=place.formatted_address;}
+      savD();
+    });
   };
+  document.addEventListener('DOMContentLoaded',function(){
+    if(typeof google!=='undefined')window.initDarnaPlaces();
+  });
 
   /* ── AUTOSAVE LISTENERS ── */
   ['fdt','ftm','fadr','ffn','fln','fem','fph','fref','fnt','fgu'].forEach(function(id){
@@ -2282,9 +2296,7 @@ resetTimer();
   /* ── INIT ── */
   buildPkgs();buildAos();upProg(1);loadSav();dPickInit();
 })();
-</script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApr6QY5waegliqq33pXGqZerouubI0H7w&libraries=places&callback=initDarnaPlaces" async defer></script></div>
+</script></div>
 
 <div id="custom-html-4d"><!-- DARNA DUO — MENU BLOCK for Mobirise -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
